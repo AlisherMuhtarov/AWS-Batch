@@ -4,7 +4,7 @@ resource "aws_batch_compute_environment" "demo" {
   compute_environment_name = "demo"
 
   compute_resources {
-    instance_role = "arn:aws:iam::555519622762:role/Terraform-Server-Role"
+    instance_role = "arn:aws:iam::555519622762:instance-profile/Terraform-Server-Role"
 
     instance_type = [
       "t2.micro"
