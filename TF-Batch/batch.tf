@@ -39,57 +39,51 @@ resource "aws_batch_job_definition" "test" {
       <<-EOT
         #!/bin/bash
 
-        input_s3_bucket="batch-customer-data-s3-bucket"
-        output_s3_bucket="your-output-s3-bucket"
-        report_s3_bucket="batch-data-processing-report"
-        report_s3_object_key="report.json"
+        # Set your S3 bucket names
+        source_bucket="batch-customer-data-s3-bucket"
+        report_bucket="batch-report-s3-bucket"
+        temp_dir="/home/ec2-user/files"  # Specify the path to a temporary directory on your system
 
-        # List all objects in the input S3 bucket
-        objects=$(aws s3api list-objects-v2 --bucket "$input_s3_bucket" --query "Contents[].Key" --output json)
+        # Function to retrieve customer data from S3 bucket
+        retrieve_data() {
+        # Sync data from S3 bucket to the temporary directory, excluding the source bucket folder
+        aws s3 sync "s3://${source_bucket}/Customer-Data/" "$temp_dir"
 
-        # Process each object in the bucket
-        for object_key in $objects; do
-        # Skip directories or non-matching files
-        if [[ "$object_key" != *".txt" ]]; then
-            continue
-        fi
-
-        # Get the customer data from the current object
-        customer_data=$(aws s3api get-object --bucket "$input_s3_bucket" --key "$object_key" /dev/stdout | jq -c '.')
-
-        if [ $? -eq 0 ]; then
-            # Process the customer data
-            processed_data=$(echo "$customer_data" | jq '.[] | .ProcessedData = "Processed for " + .Name')
-            total_spent=$(echo "$processed_data" | jq -r '[.[].TotalSpent] | add')
-            average_spent=$(echo "$processed_data" | jq -r '[.[].TotalSpent] | add / length')
-            customer_most_spent=$(echo "$processed_data" | jq -r 'max_by(.TotalSpent)')
-
-            # Create the report JSON
-            report_json="{
-            \"TotalAmountSpent\": $total_spent,
-            \"AverageAmountSpent\": $average_spent,
-            \"CustomerWithMostSpending\": $customer_most_spent
-            }"
-
-            # Print the report JSON to the console
-            echo "$report_json" | jq '.'
-
-            # Upload the report to the output S3 bucket with a fixed key
-            aws s3api put-object --bucket "$output_s3_bucket" --key "report.json" --body <(echo "$report_json")
-        else
-            echo "Failed to fetch customer data from input S3 bucket for object: $object_key"
-        fi
+        for ((i=1; i<=30; i++)); do
+            file_name="file${i}.txt"
+            cat "$temp_dir/$file_name" | grep "Customer Spend Amount" | cut -d ' ' -f 4 >> spend_amounts.txt
         done
+        }
 
-        # Consolidate reports and upload to the report bucket
-        consolidated_report=$(aws s3api list-objects-v2 --bucket "$output_s3_bucket" --query "Contents[].Key" --output json \
-        | jq -r '[.[] | select(.Key | contains("report.json"))] | [.[].Key | capture("(?<customer>.*?)_report.json").customer] | unique | map({customer: ., report: . + "_report.json"}) | {reports: .}')
+        # Function to calculate total, average, and find the customer with the most spending
+        calculate_metrics() {
+        total=0
+        max_spend=0
 
-        echo "$consolidated_report" | jq '.' > consolidated_report.json
+        while read -r spend_amount; do
+            total=$((total + spend_amount))
+            if ((spend_amount > max_spend)); then
+            max_spend=$spend_amount
+            fi
+        done < spend_amounts.txt
 
-        aws s3api create-bucket --bucket "$report_s3_bucket" --region YOUR_REGION
+        average=$((total / 30))
+        }
 
-        aws s3api put-object --bucket "$report_s3_bucket" --key "$report_s3_object_key" --body <(echo "$consolidated_report" | jq -r '.')
+        # Function to create a report and upload it to the new S3 bucket
+        create_report() {
+        report_content="Total Spend: $total\nAverage Spend: $average\nCustomer with Max Spend: $max_spend"
+
+        echo -e "$report_content" > report.txt
+        aws s3 cp report.txt "s3://${report_bucket}/"
+        }
+
+        # Main script execution
+        retrieve_data
+        calculate_metrics
+        create_report
+
+        echo "Process completed successfully."
 
       EOT
     ],
