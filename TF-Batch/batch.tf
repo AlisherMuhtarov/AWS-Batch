@@ -25,8 +25,6 @@ resource "aws_batch_compute_environment" "demo" {
 
     type = "EC2"
   }
-
-  service_role = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/Terraform-Server-Role"
   type         = "MANAGED"
 }
 
