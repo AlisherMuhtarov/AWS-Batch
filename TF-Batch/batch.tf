@@ -16,7 +16,7 @@ resource "aws_batch_compute_environment" "demo" {
 
 
     security_group_ids = [
-      aws_security_group.demo-sg.id
+      "sg-0602605da5667f871"
     ]
 
     subnets = [
