@@ -4,7 +4,7 @@ resource "aws_batch_compute_environment" "demo" {
   compute_environment_name = "demo"
 
   compute_resources {
-    instance_role = "arn:aws:iam::${data.aws_caller_identity.current}:instance-profile/Terraform-Server-Role"
+    instance_role = "arn:aws:iam::${data.aws_caller_identity.current.id}:instance-profile/Terraform-Server-Role"
 
     instance_type = [
       "optimal"
@@ -26,7 +26,7 @@ resource "aws_batch_compute_environment" "demo" {
     type = "EC2"
   }
 
-  service_role = "arn:aws:iam::${data.aws_caller_identity.current}:role/Terraform-Server-Role"
+  service_role = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/Terraform-Server-Role"
   type         = "MANAGED"
 }
 
