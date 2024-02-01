@@ -47,14 +47,6 @@ resource "aws_batch_job_definition" "test" {
         value = "512"
       }
     ]
-
-    mountPoints = [
-      {
-        sourceVolume  = "tmp"
-        containerPath   = "/app"
-        readOnly      = false
-      }
-    ]
   })
 }
 
