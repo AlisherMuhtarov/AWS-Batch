@@ -42,7 +42,7 @@ resource "aws_batch_job_definition" "test" {
         input_s3_bucket="batch-customer-data-s3-bucket"
         output_s3_bucket="your-output-s3-bucket"
         report_s3_bucket="batch-data-processing-report"
-        report_s3_object_key="report.txt"
+        report_s3_object_key="report.json"
 
         # List all objects in the input S3 bucket
         objects=$(aws s3api list-objects-v2 --bucket "$input_s3_bucket" --query "Contents[].Key" --output json)
