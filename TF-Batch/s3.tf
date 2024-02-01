@@ -22,8 +22,8 @@ resource "aws_s3_bucket_acl" "private" {
 }
 
 resource "aws_s3_object" "object" {
-    for_each = fileset("..", "**")
+    for_each = fileset("../Customer-Data/", "**")
     bucket = aws_s3_bucket.demo.id
-    key    = "${each.value}"
-    source = "../${each.value}"
+    key    = "Customer-Data/${each.value}"
+    source = "../Customer-Data/${each.value}"
 }
