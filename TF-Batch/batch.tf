@@ -1,16 +1,5 @@
 
 //----------------------COMPUTE INVIRONMENT----------------------//
-resource "aws_security_group" "demo-sg" {
-  name = "aws_batch_compute_environment_security_group"
-
-  egress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_batch_compute_environment" "demo" {
   compute_environment_name = "demo"
 
@@ -108,7 +97,7 @@ resource "aws_batch_job_definition" "test" {
     resourceRequirements = [
       {
         type  = "VCPU"
-        value = "0.55"
+        value = "0.25"
       },
       {
         type  = "MEMORY"
