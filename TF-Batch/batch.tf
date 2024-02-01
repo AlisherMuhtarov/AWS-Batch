@@ -36,7 +36,7 @@ resource "aws_batch_job_definition" "test" {
   type = "container"
   container_properties = jsonencode({
     command = ["sh batch.sh"],
-    image   = "busybox",
+    image   = "555519622762.dkr.ecr.us-east-1.amazonaws.com/test-dock:latest",
     resourceRequirements = [
       {
         type  = "VCPU"
