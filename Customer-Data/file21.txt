@@ -1,0 +1,3 @@
+Customer ID: 21
+Customer Name: Customer21
+Customer Spend Amount: 535
