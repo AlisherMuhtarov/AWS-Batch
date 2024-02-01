@@ -25,6 +25,8 @@ resource "aws_batch_compute_environment" "demo" {
 
     type = "EC2"
   }
+
+
   type         = "MANAGED"
 }
 
