@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "data" {
 }
 
 resource "aws_s3_bucket" "report" {
-  bucket = "batch-report-s3-bucket/"
+  bucket = "batch-report-s3-bucket"
 
   tags = {
     Name        = "macie-bucket"
