@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "report" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "private" {
-  bucket = aws_s3_bucket.demo.id
+  bucket = aws_s3_bucket.data.id
   rule {
     object_ownership = "BucketOwnerPreferred"
   }
@@ -26,13 +26,13 @@ resource "aws_s3_bucket_ownership_controls" "private" {
 resource "aws_s3_bucket_acl" "private" {
   depends_on = [aws_s3_bucket_ownership_controls.private]
 
-  bucket = aws_s3_bucket.demo.id
+  bucket = aws_s3_bucket.data.id
   acl    = "private"
 }
 
 resource "aws_s3_object" "object" {
     for_each = fileset("../Customer-Data/", "**")
-    bucket = aws_s3_bucket.demo.id
+    bucket = aws_s3_bucket.data.id
     key    = "Customer-Data/${each.value}"
     source = "../Customer-Data/${each.value}"
 }
