@@ -10,8 +10,8 @@ resource "aws_batch_compute_environment" "demo" {
       "optimal"
     ]
 
-    max_vcpus = 6
-    desired_vcpus = 3
+    max_vcpus = 2
+    desired_vcpus = 1
     min_vcpus = 0
 
 

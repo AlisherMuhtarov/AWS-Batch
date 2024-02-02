@@ -7,6 +7,15 @@ resource "aws_s3_bucket" "demo" {
   }
 }
 
+resource "aws_s3_bucket" "demo" {
+  bucket = "batch-report-s3-bucket/"
+
+  tags = {
+    Name        = "macie-bucket"
+    Environment = "dev"
+  }
+}
+
 resource "aws_s3_bucket_ownership_controls" "private" {
   bucket = aws_s3_bucket.demo.id
   rule {
