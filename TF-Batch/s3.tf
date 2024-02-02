@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "demo" {
+resource "aws_s3_bucket" "data" {
   bucket = "batch-customer-data-s3-bucket"
 
   tags = {
@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "demo" {
   }
 }
 
-resource "aws_s3_bucket" "demo" {
+resource "aws_s3_bucket" "report" {
   bucket = "batch-report-s3-bucket/"
 
   tags = {
