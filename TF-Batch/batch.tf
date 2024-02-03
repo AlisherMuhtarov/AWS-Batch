@@ -35,8 +35,7 @@ resource "aws_batch_job_definition" "test" {
   name = "demo-batch-definitions"
   type = "container"
   container_properties = jsonencode({
-    command = ["docker run test-dock"],
-    image   = "555519622762.dkr.ecr.us-east-1.amazonaws.com/test-dock:latest",
+    image   = "public.ecr.aws/s6a4j9d6/demo-dock:latest",
     resourceRequirements = [
       {
         type  = "VCPU"
@@ -44,7 +43,7 @@ resource "aws_batch_job_definition" "test" {
       },
       {
         type  = "MEMORY"
-        value = "512"
+        value = "500"
       }
     ]
   })
