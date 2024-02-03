@@ -108,7 +108,7 @@ resource "aws_batch_job_definition" "test" {
   name = "demo-batch-definitions"
   type = "container"
   container_properties = jsonencode({
-    jobRoleArn = "arn:aws:iam::${data.aws_caller_identity.current}:role/AWS-Terraform-Role"
+    jobRoleArn = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/AWS-Terraform-Role"
     image   = "public.ecr.aws/s6a4j9d6/demo-dock:latest",
     resourceRequirements = [
       {
