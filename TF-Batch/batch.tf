@@ -4,6 +4,7 @@ resource "aws_batch_compute_environment" "demo" {
 
   compute_resources {
     instance_role = "arn:aws:iam::${data.aws_caller_identity.current.id}:instance-profile/AWS-Batch-EC2-Role"
+    ec2_key_pair = "laptop_key"
 
     instance_type = [
       "optimal"
