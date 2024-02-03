@@ -56,21 +56,30 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
+data "aws_iam_policy" "assume_role_policy" {
+  # Your admin policy document here
+  name        = "AdminPolicy"
+  description = "Administrator Policy"
+  
+  # Example admin permissions (replace with actual permissions)
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "*",
+        Resource = "*",
+      },
+    ],
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+
 
 //----------------------COMPUTE INVIRONMENT----------------------//
 resource "aws_batch_compute_environment" "demo" {
@@ -108,7 +117,7 @@ resource "aws_batch_job_definition" "test" {
   name = "demo-batch-definitions"
   type = "container"
   container_properties = jsonencode({
-    jobRoleArn = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/AWS-Terraform-Role"
+    jobRoleArn = aws_iam_role.ecs_task_execution_role.arn
     image   = "public.ecr.aws/s6a4j9d6/demo-dock:latest",
     resourceRequirements = [
       {
