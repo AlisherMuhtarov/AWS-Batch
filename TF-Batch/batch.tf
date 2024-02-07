@@ -35,6 +35,7 @@ resource "aws_batch_job_definition" "test" {
   name = "demo-batch-definitions"
   type = "container"
   container_properties = jsonencode({
+    jobRoleArn = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/JobRole"
     image   = "public.ecr.aws/s6a4j9d6/demo-dock:latest"
     image_pull_policy = "Always"
     resourceRequirements = [
@@ -47,6 +48,7 @@ resource "aws_batch_job_definition" "test" {
         value = "500"
       }
     ]
+    executionRoleArn = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/ExecutionRole"
   })
 }
 
